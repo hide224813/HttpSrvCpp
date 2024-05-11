@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
@@ -6,13 +7,12 @@
 #include <string>
 
 const int PORT = 8080;
+const std::string HTML_FILE = "index.html";
 
-std::string generate_html_response() {
-    std::string html = "<!DOCTYPE html><html lang=\"ja\"><head><title>Simple Web Server</title></head>";
-    html += "<body><h1>Welcome to Simple Web Server</h1>";
-    html += "<p>This is a simple C++ web server.</p>";
-    html += "</body></html>";
-    return html;
+std::string read_html_file(const std::string& filename) {
+    std::ifstream file(filename);
+    std::string html_content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    return html_content;
 }
 
 int main() {
@@ -55,8 +55,8 @@ int main() {
         // Read the HTTP request (not used in this example)
 
         // Send the HTTP response with proper headers
-        std::string response = generate_html_response();
-        std::string http_response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + std::to_string(response.length()) + "\n\n" + response;
+        std::string html_content = read_html_file(HTML_FILE);
+        std::string http_response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + std::to_string(html_content.length()) + "\n\n" + html_content;
         send(new_socket, http_response.c_str(), http_response.length(), 0);
 
         // Close the socket
@@ -65,4 +65,3 @@ int main() {
 
     return 0;
 }
-
