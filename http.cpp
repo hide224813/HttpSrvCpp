@@ -52,14 +52,12 @@ int main() {
             exit(EXIT_FAILURE);
         }
 
-        // Read the HTTP request
-        char buffer[1024] = {0};
-        read(new_socket, buffer, 1024);
-        std::cout << "Received HTTP request:\n" << buffer << std::endl;
+        // Read the HTTP request (not used in this example)
 
-        // Send the HTTP response
+        // Send the HTTP response with proper headers
         std::string response = generate_html_response();
-        send(new_socket, response.c_str(), response.length(), 0);
+        std::string http_response = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + std::to_string(response.length()) + "\n\n" + response;
+        send(new_socket, http_response.c_str(), http_response.length(), 0);
 
         // Close the socket
         close(new_socket);
